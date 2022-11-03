@@ -6,22 +6,27 @@ from statsmodels.formula.api import ols
 from statsmodels.stats.multicomp import pairwise_tukeyhsd
 import matplotlib.pyplot as plt
 
-data = pd.read_csv("insurance.csv")
 print("\n----------------------------1 часть--------------------------------\n")
+data = pd.read_csv("insurance.csv")
 print("Количество пустых значений:")
 print(data.isna().sum())
 data = data.drop_duplicates()
 print("\nКоличество дубликатов: ", data.duplicated().sum())
 print("\nСписок уникальных регионов: ", data.region.unique())
+print("\n", data.describe())
 
 print("\n----------------------------2 часть--------------------------------\n")
 
-df = pd.DataFrame({"bmi": data["bmi"], "region": data["region"]})
+citizen_region = data["region"]
+citizen_bmi = data["bmi"]
+
+df = pd.DataFrame({"region": citizen_region, "bmi": citizen_bmi})
 groups = df.groupby("region").groups
-southwest = groups["southwest"]
-southeast = groups["southeast"]
-northwest = groups["northwest"]
-northeast = groups["northeast"]
+southwest = citizen_bmi[groups["southwest"]]
+southeast = citizen_bmi[groups["southeast"]]
+northwest = citizen_bmi[groups["northwest"]]
+northeast = citizen_bmi[groups["northeast"]]
+
 
 print("Первый способ, scipy: ", stats.f_oneway(southwest, southeast, northwest, northeast))
 
